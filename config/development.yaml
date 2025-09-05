@@ -1,0 +1,93 @@
+# Genesis AI 应用开发环境配置
+# 用于本地开发环境，开启调试模式和详细日志
+
+# 继承默认配置并覆盖开发环境特定设置
+
+# 应用开发环境配置
+app:
+  debug: true
+  log_level: "DEBUG"
+  tenant_mode: "single"  # 开发环境使用单租户模式简化调试
+
+# 服务器开发环境配置
+server:
+  rest_api:
+    reload: true  # 开启热重载
+    workers: 1    # 开发环境使用单进程
+  mcp_server:
+    reload: true
+    workers: 1
+
+# 数据库开发环境配置
+database:
+  url: "postgresql+asyncpg://genesis:genesis123@localhost:5432/genesis_dev"
+  echo: true  # 开发环境打印SQL语句便于调试
+  pool_size: 5
+  max_overflow: 10
+
+# 缓存开发环境配置
+cache:
+  redis:
+    host: "localhost"
+    port: 6379
+    db: 1  # 开发环境使用db1避免与生产数据冲突
+    password: ""
+  ttl: 1800  # 开发环境缓存时间较短
+
+# LLM 开发环境配置
+llm:
+  default_provider: "qwen"  # 开发环境默认使用qwen
+  providers:
+    openai:
+      model: "gpt-3.5-turbo"  # 开发环境使用较便宜的模型
+      temperature: 0.8
+    qwen:
+      model: "qwen-turbo"      # 开发环境使用turbo版本
+      temperature: 0.8
+
+# 日志开发环境配置
+logging:
+  formatters:
+    standard:
+      format: "%(asctime)s [%(levelname)s] %(name)s [%(filename)s:%(lineno)d]: %(message)s"
+  loggers:
+    genesis:
+      level: DEBUG
+    sqlalchemy:
+      level: INFO
+    httpx:
+      level: DEBUG
+    root:
+      level: DEBUG
+
+# 可观测性开发环境配置
+observability:
+  tracing:
+    enabled: false  # 开发环境关闭链路追踪以减少开销
+  metrics:
+    enabled: false  # 开发环境关闭指标收集
+
+# 开发工具配置
+development:
+  cors:
+    enabled: true
+    allow_origins:
+      - "http://localhost:3000"
+      - "http://localhost:8080"
+      - "http://127.0.0.1:3000"
+    allow_methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+    allow_headers: ["*"]
+    allow_credentials: true
+  
+  docs:
+    enabled: true
+    title: "Genesis AI App API"
+    description: "开发环境API文档"
+    version: "dev"
+    
+  test_data:
+    enabled: true
+    auto_seed: true
+    
+  debug_toolbar:
+    enabled: true

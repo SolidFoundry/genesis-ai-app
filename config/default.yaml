@@ -1,0 +1,123 @@
+# Genesis AI 应用默认配置文件
+# 包含所有环境共享的基础配置和默认值
+# 遵循"配置即代码"和"十二要素应用"原则
+
+# 应用基本信息配置
+app:
+  name: "Genesis AI App"
+  version: "1.0.0"
+  description: "企业级AI应用启动模板"
+  log_level: "INFO"
+  tenant_mode: "multi"  # 可选: 'single' 或 'multi'
+  debug: false
+
+# 服务器配置
+server:
+  rest_api:
+    host: "0.0.0.0"
+    port: 8000
+    workers: 1
+    reload: false
+  mcp_server:
+    host: "0.0.0.0"
+    port: 8001
+    workers: 1
+
+# 数据库配置
+database:
+  user: "genesis"
+  password: "genesis_password"
+  host: "localhost"
+  port: 5432
+  name: "genesis_db"
+  pool_size: 20
+  max_overflow: 30
+  pool_timeout: 30
+  pool_recycle: 3600
+  echo: false
+
+# 缓存配置
+cache:
+  redis:
+    host: "localhost"
+    port: 6379
+    db: 0
+    password: ""
+    decode_responses: true
+  ttl: 3600
+
+# 消息队列配置
+messaging:
+  rabbitmq:
+    host: "localhost"
+    port: 5672
+    username: "guest"
+    password: "guest"
+    virtual_host: "/"
+
+# LLM 提供商配置
+llm:
+  default_provider: "openai"
+  providers:
+    openai:
+      base_url: "https://api.openai.com/v1"
+      model: "gpt-4"
+      max_tokens: 4096
+      temperature: 0.7
+    qwen:
+      base_url: "https://dashscope.aliyuncs.com/compatible-mode/v1"
+      model: "qwen-max"
+      max_tokens: 4096
+      temperature: 0.7
+
+# 可观测性配置
+observability:
+  tracing:
+    enabled: true
+    service_name: "genesis-ai-app"
+    sampler_rate: 1.0
+  metrics:
+    enabled: true
+    prometheus_endpoint: "/metrics"
+
+# 日志配置
+logging:
+  version: 1
+  disable_existing_loggers: false
+  formatters:
+    standard:
+      format: "%(asctime)s [%(levelname)s] %(name)s: %(message)s"
+    json:
+      format: '{"timestamp": "%(asctime)s", "level": "%(levelname)s", "logger": "%(name)s", "message": "%(message)s", "extra": %(extra)s}'
+  handlers:
+    console:
+      class: logging.StreamHandler
+      level: INFO
+      formatter: standard
+      stream: ext://sys.stdout
+  loggers:
+    genesis:
+      level: INFO
+      propagate: false
+      handlers: [console]
+    root:
+      level: INFO
+      handlers: [console]
+
+# 依赖注入配置
+dependency_injection:
+  auto_wire: true
+  scan_packages:
+    - "src.genesis"
+
+# AI 工具配置
+ai_tools:
+  enabled: true
+  scan_packages:
+    - "src.genesis.ai_tools.packages"
+  
+# 外部API配置
+external_apis:
+  timeout: 30
+  retry_attempts: 3
+  retry_delay: 1

@@ -1,0 +1,81 @@
+version: 1
+disable_existing_loggers: false
+
+formatters:
+  standard:
+    format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  detailed:
+    format: "%(asctime)s - %(name)s - %(levelname)s - %(pathname)s:%(lineno)d - %(message)s"
+  structured:
+    '()': 'src.genesis.core.structured_logging.StructuredLogFormatter'
+  access:
+    '()': 'src.genesis.core.structured_logging.AccessLogFormatter'
+
+handlers:
+  console:
+    class: logging.StreamHandler
+    level: INFO
+    formatter: structured
+    stream: ext://sys.stdout
+
+  file:
+    class: logging.handlers.RotatingFileHandler
+    level: INFO
+    formatter: structured
+    filename: logs/app.log
+    maxBytes: 10485760  # 10MB
+    backupCount: 5
+    encoding: utf8
+
+  access_file:
+    class: logging.handlers.RotatingFileHandler
+    level: INFO
+    formatter: access
+    filename: logs/access.log
+    maxBytes: 10485760  # 10MB
+    backupCount: 5
+    encoding: utf8
+
+  error_file:
+    class: logging.handlers.RotatingFileHandler
+    level: ERROR
+    formatter: structured
+    filename: logs/error.log
+    maxBytes: 10485760  # 10MB
+    backupCount: 5
+    encoding: utf8
+
+loggers:
+  genesis:
+    level: INFO
+    handlers: [console, file, error_file]
+    propagate: false
+
+  genesis.api:
+    level: INFO
+    handlers: [console, file, access_file]
+    propagate: false
+
+  genesis.core:
+    level: INFO
+    handlers: [console, file, error_file]
+    propagate: false
+
+  genesis.access:
+    level: INFO
+    handlers: [console, access_file]
+    propagate: false
+
+  uvicorn:
+    level: INFO
+    handlers: [console, file]
+    propagate: false
+
+  uvicorn.access:
+    level: INFO
+    handlers: [console]
+    propagate: false
+
+root:
+  level: INFO
+  handlers: [console, file]

@@ -1,0 +1,101 @@
+# Genesis AI 应用项目配置文件
+# 使用 Poetry 作为包管理工具
+# 版本: 1.0.0
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+name = "genesis-ai-app"
+version = "1.0.0"
+description = "The definitive, enterprise-grade AI application starterkit. Clone, configure, and code your next great AI feature."
+authors = ["SolidFoundry <hello@solidfoundry.dev>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "genesis", from = "src"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+
+# 应用框架
+fastapi = "^0.104.0"
+uvicorn = {extras = ["standard"], version = "^0.30.0"}
+pydantic = "^2.8.0"
+pydantic-settings = "^2.1.0"
+pyyaml = "^6.0.1"
+
+# 依赖注入
+dependency-injector = "^4.41.0"
+
+# 数据库
+sqlalchemy = {extras = ["asyncio"], version = "^2.0.23"}
+asyncpg = "^0.29.0"
+alembic = "^1.13.1"
+
+# 可观测性
+structlog = "^23.2.0"
+opentelemetry-api = "^1.21.0"
+opentelemetry-sdk = "^1.21.0"
+opentelemetry-instrumentation-fastapi = "^0.46b0"
+opentelemetry-instrumentation-sqlalchemy = "^0.46b0"
+
+# AI 核心
+openai = "^1.3.0"
+
+# MCP 服务
+fastmcp = "^0.1.0"
+
+# HTTP 客户端
+aiohttp = "^3.9.0"
+
+# 日志格式化
+json-log-formatter = "^0.5.1"
+
+[tool.poetry.group.dev.dependencies]
+# 测试
+pytest = "^7.4.3"
+pytest-asyncio = "^0.21.1"
+pytest-cov = "^4.1.0"
+httpx = "^0.26.0"
+
+# 代码质量
+ruff = "^0.1.6"
+black = "^23.11.0"
+mypy = "^1.7.1"
+
+# 架构守护
+import-linter = "^2.0"
+
+# 开发工具
+pre-commit = "^3.5.0"
+
+[tool.poetry.plugins."genesis.ai_tools"]
+common_datetime = "genesis.ai_tools.packages.common_tools:GetDateTimeTool"
+
+# 工具配置
+
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+select = ["E", "W", "F", "I", "B", "C4", "UP", "ARG"]
+
+[tool.black]
+line-length = 88
+target-version = ['py311']
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+packages = ["src/genesis"]
+
+[tool.importlinter]
+# 架构层级契约定义
+[[tool.importlinter.contracts]]
+name = "architecture"
+type = "layer"
+layers = [
+    "apps",
+    "genesis.business_logic",
+    "genesis.infrastructure"
+]
